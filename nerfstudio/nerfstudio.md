@@ -8,10 +8,11 @@
 
 ```
 python==3.8
-pip install torch==2.1.2+cu118
+torch==2.1.2+cu118
 torchvision==0.16.2+cu118
+nerfstudio==1.1.4
 cmake==3.29.1
-Visual Studio 2019
+Visual Studio 2019 + 2022(都装上备用) 
 ```
 
 ---
@@ -67,6 +68,11 @@ Visual Studio 2019
      ```
      
    - 执行`python setup.py install`
+   - 执行过程中若出现setup缺包相关错误，比如`No ...`
+     ```
+     pip packaging==22.0
+     ```
+     
    - 执行过程中可能出现： `“Error compiling objects for extension”` ，需要修改`tiny-cuda-nn\bindings\torch\setup.py`中的内容：
      
      ```
@@ -74,10 +80,18 @@ Visual Studio 2019
      # 修改为
      cmdclass={'build_ext': BuildExtension.with_options(use_ninja=False)}
      ```
-   - 如果仍旧报错，运行一下命令转换`msvc`到x64版本
+   - 如果仍旧报错，运行以下命令转换`msvc`到x64版本（请自行索引到`Microsoft Visual Studio`的`vcvarsall.bat`）
      ```
      "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" X64
 5. 安装nerfstudio
     ```
     pip install nerfstudio
     ```
+   
+6. 如果web什么都不显示（浏览器console报错）
+    ```
+   # 浏览器报错：Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/plain". Strict MIME type checking is enforced for module scripts per HTML spec.
+   pip install viser==0.2.0
+   #请忽略nerfstudio报版本不兼容错误！直接重新运行代码在浏览器中尝试查看即可
+   ```
+    _**Note**_: 降低viser版本会带来`KeyError: 'CameraMessage'`，但经笔者实践目前尚未发现该报错会带来什么影响，web可视化仍旧可用。
