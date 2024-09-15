@@ -1,6 +1,6 @@
 # 🛠️安装记录： Pytorch3d on Windows11
 
-# 2024-07-17
+# 2024-09-15
 
 ****
 
@@ -8,12 +8,9 @@
 
 ```
 python==3.8
-pytorch==1.11.0 
-torchvision==0.12.0 
-torchaudio==0.11.0 
-cudatoolkit=11.3
-CUB==1.15.0
-pytorch3d==0.7.2
+torch==2.1.2+cu118
+torchvision==0.16.2+cu118
+pytorch3d==0.7.7
 ```
 
 ---
@@ -25,7 +22,7 @@ pytorch3d==0.7.2
    ```
    conda create -n pytorch3d python=3.8
    #Install PyTorch
-   conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
+   pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
    ```
 
 2. 安装额外必需库
@@ -38,7 +35,7 @@ pytorch3d==0.7.2
    
    - [Releases · facebookresearch/pytorch3d · GitHub](https://github.com/facebookresearch/pytorch3d/releases)`https://github.com/facebookresearch/pytorch3d/releases`
    
-   - 选择版本的依据（如0.7.2，支持PyTorch 1.9.0 ~ 1.13.0)：
+   - 选择版本的依据（如0.7.7，支持PyTorch 2.0 ~ 2.3)：
    
    <img src="images/2024-07-17-13-42-07-image.png" title="" alt="" data-align="left">
 
@@ -48,15 +45,25 @@ pytorch3d==0.7.2
    
    - **替换**为 `extra_compile_args = {"cxx": []}`
 
-5. CUB 安装(因为CUDA低于**11.7**，所以才安装)
+5. CUB 安装(因为CUDA高于**11.7**，所以不用特别安装CUB)
+   - 添加或修改在系统环境变量 变量名：`CUB_HOME`，指向CUB路径：
+   ```
+   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include\cub
+   ```
+
+6. 在`setup.py`中搜索`nvcc_args`，添加 `"-DWIN32_LEAN_AND_MEAN"`，如下图：
+   ![img.png](images/DWIN32_LEAN_AND_MEAN.png)
+
+7. 找到下面的文件：
+   ```
+   C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include\thrust\system\cuda\config.h
+   ```
    
-   - 下载与CUDA toolkit版本对应的CUB版本
-     
-       [NVIDIA CUB Releases](https://github.com/NVIDIA/cub/releases)`https://github.com/NVIDIA/cub/releases`
-     
-     <img title="" src="images/2024-07-17-13-53-13-image.png" alt="" width="223" data-align="left">
+   搜索  `THRUST_IGNORE_CUB_VERSION_CHECK`:
+     在`#ifndef THRUST_IGNORE_CUB_VERSION_CHECK`前加一行
+     `#ifndef THRUST_IGNORE_CUB_VERSION_CHECK`
+   ![img.png](images/THRUST_IGNORE_CUB_VERSION_CHECK.png)
    
-   - 下载后在系统环境变量中添加 变量名：`CUB_HOME`，指向CUB本地下载路径：`\~yourpath~\cub-1.15.0`  
 
 6. 使用 VS2022 终端安装
    
@@ -82,6 +89,6 @@ pytorch3d==0.7.2
      
      在`cast.h`中注释以下内容，之后重新运行`python setup.py install`
      
-     ![](C:\Users\12284\AppData\Roaming\marktext\images\2024-07-17-14-09-22-image.png)
+     ![](images/2024-07-17-14-09-22-image.png)
 
   
